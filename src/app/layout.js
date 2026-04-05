@@ -1,9 +1,27 @@
-import { Pixelify_Sans } from "next/font/google";
 import "./globals.css";
 
-const pixelFont = Pixelify_Sans({
-  subsets: ["latin"],
-  weight: ["400", "700"], // optional
+import localFont from "next/font/local";
+
+const pixelFont = localFont({
+  src: [
+    {
+      path: "../../public/fonts/PixelifySans-Regular.ttf",
+      weight: "400",
+    },
+    {
+      path: "../../public/fonts/PixelifySans-Medium.ttf",
+      weight: "500",
+    },
+    {
+      path: "../../public/fonts/PixelifySans-SemiBold.ttf",
+      weight: "600",
+    },
+    {
+      path: "../../public/fonts/PixelifySans-Bold.ttf",
+      weight: "700",
+    },
+  ],
+  variable: "--font-pixel",
 });
 
 export const metadata = {
@@ -14,7 +32,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={pixelFont.className}>
+      <body className={`${pixelFont.variable} font-pixel`}>
         {children}
       </body>
     </html>

@@ -1,27 +1,46 @@
 "use client";
-
 import { useEffect, useState } from "react";
 
 export default function Typewriter({
-  text = "",
+  texts = [],
   speed = 50,
-  className = "",
+  deleteSpeed = 30,
+  pause = 1500,
+  className = ""
 }) {
-  const [index, setIndex] = useState(0);
+  const [textIndex, setTextIndex] = useState(0);
+  const [displayed, setDisplayed] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    setIndex(0);
-  }, [text]);
+    const currentText = texts[textIndex];
 
-  useEffect(() => {
-    if (index >= text.length) return;
+    let timeout;
 
-    const timeout = setTimeout(() => {
-      setIndex((prev) => prev + 1);
-    }, speed);
+    if (!isDeleting) {
+      // typing
+      if (displayed.length < currentText.length) {
+        timeout = setTimeout(() => {
+          setDisplayed(currentText.slice(0, displayed.length + 1));
+        }, speed);
+      } else {
+        // pause before deleting
+        timeout = setTimeout(() => setIsDeleting(true), pause);
+      }
+    } else {
+      // deleting
+      if (displayed.length > 0) {
+        timeout = setTimeout(() => {
+          setDisplayed(currentText.slice(0, displayed.length - 1));
+        }, deleteSpeed);
+      } else {
+        setIsDeleting(false);
+        setTextIndex((prev) => (prev + 1) % texts.length);
+      }
+    }
 
     return () => clearTimeout(timeout);
-  }, [index, text, speed]);
+  }, [displayed, isDeleting, textIndex, texts, speed, deleteSpeed, pause]);
 
-  return <p className={className}>{text.slice(0, index)}</p>;
+  return <span className={className} style={{whiteSpace: "pre-line"}}>{displayed}</span>;
 }
